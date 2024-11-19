@@ -1,15 +1,15 @@
 import React from 'react'
 import Alert from '@mui/material/Alert'
 import { Trans } from 'react-i18next'
-import { Message } from '../../shared/types'
-import { aiProviderNameHash } from '../packages/models'
-import * as atoms from '../stores/atoms'
-import * as settingActions from '../stores/settingActions'
 import { useSetAtom } from 'jotai'
 import { Link } from '@mui/material'
 import { ChatboxAIAPIError } from '@/packages/models/errors'
 import platform from '@/packages/platform'
 import { trackingEvent } from '@/packages/event'
+import * as settingActions from '../stores/settingActions'
+import * as atoms from '../stores/atoms'
+import { aiProviderNameHash } from '../packages/models'
+import { Message } from '../../shared/types'
 
 export default function MessageErrTips(props: { msg: Message }) {
     const { msg } = props
@@ -18,7 +18,7 @@ export default function MessageErrTips(props: { msg: Message }) {
         return null
     }
     const tips: React.ReactNode[] = []
-    let onlyShowTips = false 
+    let onlyShowTips = false
     if (msg.error.startsWith('API Error')) {
         tips.push(
             <Trans
@@ -30,7 +30,8 @@ export default function MessageErrTips(props: { msg: Message }) {
                     <a
                         href={`https://chatboxai.app/redirect_app/faqs/${settingActions.getLanguage()}`}
                         target="_blank"
-                    ></a>,
+                        rel="noreferrer"
+                    />,
                 ]}
             />
         )
@@ -39,7 +40,7 @@ export default function MessageErrTips(props: { msg: Message }) {
             <Trans
                 i18nKey="network error tips"
                 values={{
-                    host: msg.errorExtra?.['host'] || 'AI Provider',
+                    host: msg.errorExtra?.host || 'AI Provider',
                 }}
             />
         )
@@ -55,7 +56,7 @@ export default function MessageErrTips(props: { msg: Message }) {
                     aiProvider: msg.aiProvider ? aiProviderNameHash[msg.aiProvider] : 'AI Provider',
                 }}
                 components={[
-                    <Link className="cursor-pointer font-bold" onClick={() => setOpenSettingDialogAtom('ai')}></Link>,
+                    <Link className="cursor-pointer font-bold" onClick={() => setOpenSettingDialogAtom('ai')} />,
                 ]}
             />
         )
@@ -71,14 +72,19 @@ export default function MessageErrTips(props: { msg: Message }) {
                     }}
                     components={{
                         OpenSettingButton: (
-                            <Link className="cursor-pointer italic" onClick={() => setOpenSettingDialogAtom('ai')}></Link>
+                            <Link className="cursor-pointer italic" onClick={() => setOpenSettingDialogAtom('ai')} />
                         ),
                         OpenMorePlanButton: (
-                            <Link className="cursor-pointer italic" onClick={() => {
-                                platform.openLink('https://chatboxai.app/redirect_app/view_more_plans')
-                                trackingEvent('click_view_more_plans_button_from_upgrade_error_tips', { event_category: 'user' })
-                            }}></Link>
-                        )
+                            <Link
+                                className="cursor-pointer italic"
+                                onClick={() => {
+                                    platform.openLink('https://chatboxai.app/redirect_app/view_more_plans')
+                                    trackingEvent('click_view_more_plans_button_from_upgrade_error_tips', {
+                                        event_category: 'user',
+                                    })
+                                }}
+                            />
+                        ),
                     }}
                 />
             )
@@ -91,23 +97,26 @@ export default function MessageErrTips(props: { msg: Message }) {
                     <a
                         href={`https://chatboxai.app/redirect_app/faqs/${settingActions.getLanguage()}`}
                         target="_blank"
-                    ></a>,
+                        rel="noreferrer"
+                    />,
                 ]}
             />
         )
     }
     return (
         <Alert icon={false} severity="error">
-            {tips.map((tip, i) => (<b key={i}>{tip}</b>))}
-            {
-                onlyShowTips
-                    ? <></>
-                    : <>
-                        <br />
-                        <br />
-                        {msg.error}
-                    </>
-            }
+            {tips.map((tip, i) => (
+                <b key={i}>{tip}</b>
+            ))}
+            {onlyShowTips ? (
+                <></>
+            ) : (
+                <>
+                    <br />
+                    <br />
+                    {msg.error}
+                </>
+            )}
         </Alert>
     )
 }

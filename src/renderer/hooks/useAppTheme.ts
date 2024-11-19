@@ -1,8 +1,7 @@
 import { useMemo, useLayoutEffect } from 'react'
 import { getDefaultStore, useAtomValue } from 'jotai'
+import { createTheme, ThemeOptions } from '@mui/material/styles'
 import { activeThemeAtom, themeAtom, fontSizeAtom } from '../stores/atoms'
-import { createTheme } from '@mui/material/styles'
-import { ThemeOptions } from '@mui/material/styles'
 import { Theme } from '../../shared/types'
 import platform from '../packages/platform'
 
@@ -55,11 +54,11 @@ export function getThemeDesign(realTheme: 'light' | 'dark', fontSize: number): T
             ...(realTheme === 'light'
                 ? {}
                 : {
-                    background: {
-                        default: 'rgb(40, 40, 40)',
-                        paper: 'rgb(40, 40, 40)',
-                    },
-                }),
+                      background: {
+                          default: 'rgb(40, 40, 40)',
+                          paper: 'rgb(40, 40, 40)',
+                      },
+                  }),
         },
         typography: {
             fontSize,

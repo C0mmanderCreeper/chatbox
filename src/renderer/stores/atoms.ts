@@ -1,8 +1,7 @@
 import { atom, SetStateAction } from 'jotai'
-import { Session, Toast, Settings, CopilotDetail, Message, SettingWindowTab
-} from '../../shared/types'
 import { selectAtom, atomWithStorage } from 'jotai/utils'
 import { focusAtom } from 'jotai-optics'
+import { Session, Toast, Settings, CopilotDetail, Message, SettingWindowTab } from '../../shared/types'
 import * as defaults from '../../shared/defaults'
 import storage, { StorageKey } from '../storage'
 import platform from '../packages/platform'
@@ -11,11 +10,11 @@ const _settingsAtom = atomWithStorage<Settings>(StorageKey.Settings, defaults.se
 export const settingsAtom = atom(
     (get) => {
         const settings = get(_settingsAtom)
-        return Object.assign({}, defaults.settings(), settings)
+        return { ...defaults.settings(), ...settings }
     },
     (get, set, update: SetStateAction<Settings>) => {
         const settings = get(_settingsAtom)
-        let newSettings = typeof update === 'function' ? update(settings) : update
+        const newSettings = typeof update === 'function' ? update(settings) : update
         if (newSettings.proxy !== settings.proxy) {
             platform.ensureProxyConfig({ proxy: newSettings.proxy })
         }
@@ -87,16 +86,15 @@ export const currentSessionIdAtom = atom(
 export const currentSessionAtom = atom((get) => {
     const id = get(currentSessionIdAtom)
     const sessions = get(sessionsAtom)
-    let current = sessions.find((session) => session.id === id)
+    const current = sessions.find((session) => session.id === id)
     if (!current) {
-        return sessions[sessions.length - 1]    // fallback to the last session
+        return sessions[sessions.length - 1] // fallback to the last session
     }
     return current
 })
 
 export const currentSessionNameAtom = selectAtom(currentSessionAtom, (s) => s.name)
 export const currsentSessionPicUrlAtom = selectAtom(currentSessionAtom, (s) => s.picUrl)
-
 
 export const currentMessageListAtom = selectAtom(currentSessionAtom, (s) => {
     let messageContext: Message[] = []

@@ -15,7 +15,7 @@ export function getModel(setting: Settings, config: Config) {
         case ModelProvider.SiliconFlow:
             return new SiliconFlow(setting)
         default:
-            throw new Error('Cannot find model with provider: ' + setting.aiProvider)
+            throw new Error(`Cannot find model with provider: ${setting.aiProvider}`)
     }
 }
 
@@ -59,7 +59,7 @@ export function getModelDisplayName(settings: Settings, sessionType: SessionType
             if (settings.model === 'custom-model') {
                 let name = settings.openaiCustomModel || ''
                 if (name.length >= 10) {
-                    name = name.slice(0, 10) + '...'
+                    name = `${name.slice(0, 10)}...`
                 }
                 return `OpenAI Custom Model (${name})`
             }

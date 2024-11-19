@@ -1,24 +1,39 @@
 import { Message } from 'src/shared/types'
-import { ApiError, NetworkError, AIProviderNoImplementedPaintError, BaseError, AIProviderNoImplementedChatError } from './errors'
 import { createParser } from 'eventsource-parser'
 import _ from 'lodash'
+import {
+    ApiError,
+    NetworkError,
+    AIProviderNoImplementedPaintError,
+    BaseError,
+    AIProviderNoImplementedChatError,
+} from './errors'
 
 export default class Base {
     public name = 'Unknown'
 
-    constructor() {
-    }
+    constructor() {}
 
-    async callChatCompletion(messages: Message[], signal?: AbortSignal, onResultChange?: onResultChange): Promise<string> {
+    async callChatCompletion(
+        messages: Message[],
+        signal?: AbortSignal,
+        onResultChange?: onResultChange
+    ): Promise<string> {
         throw new AIProviderNoImplementedChatError(this.name)
     }
 
-    async chat(messages: Message[], onResultUpdated?: (data: { text: string, cancel(): void }) => void): Promise<string> {
+    async chat(
+        messages: Message[],
+        onResultUpdated?: (data: { text: string; cancel(): void }) => void
+    ): Promise<string> {
         messages = await this.preprocessMessage(messages)
         return await this._chat(messages, onResultUpdated)
     }
 
-    protected async _chat(messages: Message[], onResultUpdated?: (data: { text: string, cancel(): void }) => void): Promise<string> {
+    protected async _chat(
+        messages: Message[],
+        onResultUpdated?: (data: { text: string; cancel(): void }) => void
+    ): Promise<string> {
         let canceled = false
         const controller = new AbortController()
         const stop = () => {
@@ -27,7 +42,7 @@ export default class Base {
         }
         let result = ''
         try {
-            let onResultChange: onResultChange | undefined = undefined
+            let onResultChange: onResultChange | undefined
             if (onResultUpdated) {
                 onResultUpdated({ text: result, cancel: stop })
                 onResultChange = (newResult: string) => {
@@ -78,8 +93,8 @@ export default class Base {
         }
         let buffer = ''
         for await (const chunk of this.iterableStreamAsync(response.body)) {
-            let data = new TextDecoder().decode(chunk)
-            buffer = buffer + data
+            const data = new TextDecoder().decode(chunk)
+            buffer += data
             let lines = buffer.split('\n')
             if (lines.length <= 1) {
                 continue
@@ -94,16 +109,15 @@ export default class Base {
         }
     }
 
-    async * iterableStreamAsync(stream: ReadableStream): AsyncIterableIterator<Uint8Array> {
+    async *iterableStreamAsync(stream: ReadableStream): AsyncIterableIterator<Uint8Array> {
         const reader = stream.getReader()
         try {
             while (true) {
                 const { value, done } = await reader.read()
                 if (done) {
                     return
-                } else {
-                    yield value
                 }
+                yield value
             }
         } finally {
             reader.releaseLock()
@@ -136,7 +150,7 @@ export default class Base {
                     requestError = e
                 } else {
                     const err = e as Error
-                    const origin = new URL(url).origin
+                    const { origin } = new URL(url)
                     requestError = new NetworkError(err.message, origin)
                 }
                 await new Promise((resolve) => setTimeout(resolve, 500))
@@ -149,12 +163,7 @@ export default class Base {
         }
     }
 
-    async get(
-        url: string,
-        headers: Record<string, string>,
-        signal?: AbortSignal,
-        retry = 3
-    ) {
+    async get(url: string, headers: Record<string, string>, signal?: AbortSignal, retry = 3) {
         let requestError: ApiError | NetworkError | null = null
         for (let i = 0; i < retry + 1; i++) {
             try {
@@ -173,7 +182,7 @@ export default class Base {
                     requestError = e
                 } else {
                     const err = e as Error
-                    const origin = new URL(url).origin
+                    const { origin } = new URL(url)
                     requestError = new NetworkError(err.message, origin)
                 }
             }

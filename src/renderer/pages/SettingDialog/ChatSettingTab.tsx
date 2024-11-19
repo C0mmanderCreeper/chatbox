@@ -1,6 +1,6 @@
 import { Button, TextField, Box, FormControlLabel, Switch, FormGroup, Badge, IconButton, useTheme } from '@mui/material'
-import { Settings } from '../../../shared/types'
 import { useTranslation } from 'react-i18next'
+import { Settings } from '../../../shared/types'
 import * as defaults from '../../../shared/defaults'
 
 export default function ChatSettingTab(props: {
@@ -12,7 +12,7 @@ export default function ChatSettingTab(props: {
 
     return (
         <Box>
-            <Box className='mb-2'>
+            <Box className="mb-2">
                 <TextField
                     margin="dense"
                     label={t('Default Prompt for New Conversation')}

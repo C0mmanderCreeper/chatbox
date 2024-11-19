@@ -13,14 +13,14 @@ import path from 'path'
 import { app, BrowserWindow, shell, ipcMain, nativeTheme, session, dialog } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import log from 'electron-log'
+import * as fs from 'fs-extra'
+import sanitizeFilename from 'sanitize-filename'
 import MenuBuilder from './menu'
 import { resolveHtmlPath } from './util'
 import Locale from './locales'
 import { store, getConfig, getSettings } from './store-node'
 import * as proxy from './proxy'
-import * as fs from 'fs-extra'
 import * as analystic from './analystic-node'
-import sanitizeFilename from 'sanitize-filename'
 
 if (process.platform === 'win32') {
     app.setAppUserModelId(app.name)
@@ -251,7 +251,7 @@ ipcMain.handle('shouldShowAboutDialogWhenStartUp', (event) => {
 
 ipcMain.handle('appLog', (event, dataJson) => {
     const data: { level: string; message: string } = JSON.parse(dataJson)
-    data.message = 'APP_LOG: ' + data.message
+    data.message = `APP_LOG: ${data.message}`
     switch (data.level) {
         case 'info':
             log.info(data.message)

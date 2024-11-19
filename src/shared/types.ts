@@ -55,8 +55,8 @@ export interface Session {
 export function createMessage(role: MessageRole = MessageRoleEnum.User, content: string = ''): Message {
     return {
         id: uuidv4(),
-        content: content,
-        role: role,
+        content,
+        role,
         timestamp: new Date().getTime(),
     }
 }

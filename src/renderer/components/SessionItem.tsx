@@ -1,17 +1,17 @@
 import React, { useMemo } from 'react'
 import { useSetAtom } from 'jotai'
 import { ListItemText, MenuItem, Avatar, IconButton, Typography, ListItemIcon, useTheme } from '@mui/material'
-import { Session } from '../../shared/types'
 import CopyIcon from '@mui/icons-material/CopyAll'
 import EditIcon from '@mui/icons-material/Edit'
 import ChatBubbleOutlineOutlinedIcon from '@mui/icons-material/ChatBubbleOutlineOutlined'
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined'
 import DeleteIcon from '@mui/icons-material/Delete'
-import StyledMenu from './StyledMenu'
 import { useTranslation } from 'react-i18next'
-import * as sessionActions from '../stores/sessionActions'
 import * as atoms from '@/stores/atoms'
 import { cn } from '@/lib/utils'
+import * as sessionActions from '../stores/sessionActions'
+import StyledMenu from './StyledMenu'
+import { Session } from '../../shared/types'
 
 export interface Props {
     session: Session
@@ -45,12 +45,16 @@ function _SessionItem(props: Props) {
                 selected={selected}
                 onClick={onClick}
                 sx={{ padding: '0.1rem', margin: '0.1rem' }}
-                className='group/session-item'
+                className="group/session-item"
             >
                 <ListItemIcon>
-                    <IconButton color={'inherit'} onClick={onClick}>
+                    <IconButton color="inherit" onClick={onClick}>
                         {session.picUrl ? (
-                            <Avatar sizes={medianSize} sx={{ width: medianSize, height: medianSize }} src={session.picUrl} />
+                            <Avatar
+                                sizes={medianSize}
+                                sx={{ width: medianSize, height: medianSize }}
+                                src={session.picUrl}
+                            />
                         ) : (
                             <ChatBubbleOutlineOutlinedIcon fontSize="small" />
                         )}
@@ -76,7 +80,7 @@ function _SessionItem(props: Props) {
                 onClose={handleMenuClose}
             >
                 <MenuItem
-                    key={session.id + 'edit'}
+                    key={`${session.id}edit`}
                     onClick={() => {
                         setChatConfigDialogSession(session)
                         handleMenuClose()
@@ -88,7 +92,7 @@ function _SessionItem(props: Props) {
                 </MenuItem>
 
                 <MenuItem
-                    key={session.id + 'copy'}
+                    key={`${session.id}copy`}
                     onClick={() => {
                         sessionActions.copy(session)
                         handleMenuClose()
@@ -100,7 +104,7 @@ function _SessionItem(props: Props) {
                 </MenuItem>
 
                 <MenuItem
-                    key={session.id + 'del'}
+                    key={`${session.id}del`}
                     onClick={() => {
                         setAnchorEl(null)
                         handleMenuClose()

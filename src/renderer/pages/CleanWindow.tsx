@@ -1,12 +1,11 @@
 import { Button, Dialog, DialogContent, DialogActions, DialogTitle, DialogContentText } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import * as atoms from '../stores/atoms'
 import { useAtom } from 'jotai'
-import * as sessionActions from '../stores/sessionActions'
 import { trackingEvent } from '@/packages/event'
+import * as atoms from '../stores/atoms'
+import * as sessionActions from '../stores/sessionActions'
 
-interface Props {
-}
+interface Props {}
 
 export default function CleanWindow(props: Props) {
     const [sessionClean, setSessionClean] = useAtom(atoms.sessionCleanDialogAtom)
@@ -31,7 +30,7 @@ export default function CleanWindow(props: Props) {
             <DialogContent>
                 <DialogContentText>
                     {t('delete confirmation', {
-                        sessionName: '"' + sessionClean?.name + '"',
+                        sessionName: `"${sessionClean?.name}"`,
                     })}
                 </DialogContentText>
             </DialogContent>

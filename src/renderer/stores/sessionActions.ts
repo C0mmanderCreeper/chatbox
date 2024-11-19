@@ -1,22 +1,23 @@
 import { getDefaultStore } from 'jotai'
-import {
-    Settings,
-    createMessage,
-    Message,
-    Session,
-} from '../../shared/types'
-import * as atoms from './atoms'
-import * as promptFormat from '../packages/prompts'
 import * as Sentry from '@sentry/react'
 import { v4 as uuidv4 } from 'uuid'
-import * as defaults from '../../shared/defaults'
-import * as scrollActions from './scrollActions'
 import { getModel, getModelDisplayName } from '@/packages/models'
-import { AIProviderNoImplementedPaintError, NetworkError, ApiError, BaseError, ChatboxAIAPIError } from '@/packages/models/errors'
-import platform from '../packages/platform'
+import {
+    AIProviderNoImplementedPaintError,
+    NetworkError,
+    ApiError,
+    BaseError,
+    ChatboxAIAPIError,
+} from '@/packages/models/errors'
 import { throttle } from 'lodash'
 import { countWord } from '@/packages/word-count'
 import { estimateTokensFromMessages } from '@/packages/token'
+import platform from '../packages/platform'
+import * as scrollActions from './scrollActions'
+import * as defaults from '../../shared/defaults'
+import * as promptFormat from '../packages/prompts'
+import * as atoms from './atoms'
+import { Settings, createMessage, Message, Session } from '../../shared/types'
 import * as settingActions from './settingActions'
 
 export function create(newSession: Session) {
@@ -157,7 +158,7 @@ export async function submitNewUserMessage(params: {
 }) {
     const { currentSessionId, newUserMsg, needGenerating } = params
     insertMessage(currentSessionId, newUserMsg)
-    let newAssistantMsg = createMessage('assistant', '')
+    const newAssistantMsg = createMessage('assistant', '')
     if (needGenerating) {
         newAssistantMsg.generating = true
         insertMessage(currentSessionId, newAssistantMsg)
@@ -193,8 +194,8 @@ export async function generate(sessionId: string, targetMsg: Message) {
     }
     modifyMessage(sessionId, targetMsg)
 
-    let messages = session.messages
-    let targetMsgIx = messages.findIndex((m) => m.id === targetMsg.id)
+    const { messages } = session
+    const targetMsgIx = messages.findIndex((m) => m.id === targetMsg.id)
 
     try {
         const model = getModel(settings, configs)
@@ -202,7 +203,7 @@ export async function generate(sessionId: string, targetMsg: Message) {
             case 'chat':
             case undefined:
                 const promptMsgs = genMessageContext(settings, messages.slice(0, targetMsgIx))
-                const throttledModifyMessage = throttle(({ text, cancel }: { text: string, cancel: () => void }) => {
+                const throttledModifyMessage = throttle(({ text, cancel }: { text: string; cancel: () => void }) => {
                     targetMsg = { ...targetMsg, content: text, cancel }
                     modifyMessage(sessionId, targetMsg)
                 }, 100)
@@ -222,10 +223,16 @@ export async function generate(sessionId: string, targetMsg: Message) {
         if (!(err instanceof Error)) {
             err = new Error(`${err}`)
         }
-        if (!(err instanceof ApiError || err instanceof NetworkError || err instanceof AIProviderNoImplementedPaintError)) {
+        if (
+            !(
+                err instanceof ApiError ||
+                err instanceof NetworkError ||
+                err instanceof AIProviderNoImplementedPaintError
+            )
+        ) {
             Sentry.captureException(err) // unexpected error should be reported
         }
-        let errorCode: number | undefined = undefined
+        let errorCode: number | undefined
         if (err instanceof BaseError) {
             errorCode = err.code
         }
@@ -238,7 +245,7 @@ export async function generate(sessionId: string, targetMsg: Message) {
             error: `${err.message}`,
             errorExtra: {
                 aiProvider: settings.aiProvider,
-                host: err['host'],
+                host: err.host,
             },
         }
         modifyMessage(sessionId, targetMsg, true)
@@ -255,12 +262,11 @@ async function _generateName(sessionId: string, modifyName: (sessionId: string, 
     const configs = await platform.getConfig()
     try {
         const model = getModel(settings, configs)
-        let name = await model.chat(promptFormat.nameConversation(
-            session.messages
-                .filter(m => m.role !== 'system')
-                .slice(0, 4),
-            settings.language,
-        ),
+        let name = await model.chat(
+            promptFormat.nameConversation(
+                session.messages.filter((m) => m.role !== 'system').slice(0, 4),
+                settings.language
+            )
         )
         name = name.replace(/['"“”]/g, '')
         name = name.slice(0, 10)
@@ -277,9 +283,7 @@ export async function generateName(sessionId: string) {
 }
 
 function genMessageContext(settings: Settings, msgs: Message[]) {
-    const {
-        openaiMaxContextMessageCount
-    } = settings
+    const { openaiMaxContextMessageCount } = settings
     if (msgs.length === 0) {
         throw new Error('No messages to replay')
     }
@@ -297,10 +301,7 @@ function genMessageContext(settings: Settings, msgs: Message[]) {
         const size = estimateTokensFromMessages([msg]) + 20 // 20 is a rough estimation of the overhead of the prompt
         if (settings.aiProvider === 'openai') {
         }
-        if (
-            openaiMaxContextMessageCount <= 20 &&
-            prompts.length >= openaiMaxContextMessageCount + 1
-        ) {
+        if (openaiMaxContextMessageCount <= 20 && prompts.length >= openaiMaxContextMessageCount + 1) {
             break
         }
         prompts = [msg, ...prompts]

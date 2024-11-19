@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
+import { useAtom } from 'jotai'
 import * as remote from '../packages/remote'
 import { CopilotDetail } from '../../shared/types'
-import { useAtom } from 'jotai'
 import { myCopilotsAtom } from '../stores/atoms'
 
 export function useMyCopilots() {

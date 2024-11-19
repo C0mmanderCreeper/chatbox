@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
-import * as atoms from './stores/atoms'
 import { useAtomValue } from 'jotai'
+import * as atoms from './stores/atoms'
 import InputBox from './components/InputBox'
 import MessageList from './components/MessageList'
 import { drawerWidth } from './Sidebar'

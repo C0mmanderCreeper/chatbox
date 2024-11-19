@@ -1,13 +1,13 @@
 import { useEffect } from 'react'
 import { Typography, useTheme } from '@mui/material'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { cn } from '@/lib/utils'
 import SponsorChip from './SponsorChip'
 import * as atoms from '../stores/atoms'
-import { useAtomValue, useSetAtom } from 'jotai'
 import * as sessionActions from '../stores/sessionActions'
 import Toolbar from './Toolbar'
-import { cn } from '@/lib/utils'
 
-interface Props { }
+interface Props {}
 
 export default function Header(props: Props) {
     const theme = useTheme()
@@ -15,12 +15,8 @@ export default function Header(props: Props) {
     const setChatConfigDialogSession = useSetAtom(atoms.chatConfigDialogAtom)
 
     useEffect(() => {
-        if (
-            currentSession.name === 'Untitled'
-            && currentSession.messages.length >= 2
-        ) {
+        if (currentSession.name === 'Untitled' && currentSession.messages.length >= 2) {
             sessionActions.generateName(currentSession.id)
-            return 
         }
     }, [currentSession.messages.length])
 
@@ -53,11 +49,9 @@ export default function Header(props: Props) {
                         editCurrentSession()
                     }}
                 >
-                    {
-                        <Typography variant="h6" noWrap className={cn('max-w-56', 'ml-3')}>
-                            {currentSession.name}
-                        </Typography>
-                    }
+                    <Typography variant="h6" noWrap className={cn('max-w-56', 'ml-3')}>
+                        {currentSession.name}
+                    </Typography>
                 </Typography>
                 <SponsorChip sessionId={currentSession.id} />
                 <Toolbar />

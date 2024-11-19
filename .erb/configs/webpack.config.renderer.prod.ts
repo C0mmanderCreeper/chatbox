@@ -17,8 +17,8 @@ import deleteSourceMaps from '../scripts/delete-source-maps'
 
 checkNodeEnv('production')
 
-let enableSourceMap = false
-if (! enableSourceMap) {
+const enableSourceMap = false
+if (!enableSourceMap) {
     deleteSourceMaps()
 }
 

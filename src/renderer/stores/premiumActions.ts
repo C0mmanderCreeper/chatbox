@@ -1,17 +1,17 @@
 import { useEffect } from 'react'
-import * as remote from '../packages/remote'
 import { getDefaultStore, useAtom } from 'jotai'
-import { settingsAtom } from '../stores/atoms'
-import platform from '../packages/platform'
 import { FetchError } from 'ofetch'
 import omit from 'lodash/omit'
 import * as Sentry from '@sentry/react'
 import { ModelProvider, Settings } from 'src/shared/types'
+import platform from '../packages/platform'
+import { settingsAtom } from './atoms'
+import * as remote from '../packages/remote'
 
 export function useAutoValidate() {
     const [settings, setSettings] = useAtom(settingsAtom)
     const clearValidatedData = () => {
-        setSettings(settings => ({
+        setSettings((settings) => ({
             ...settings,
             licenseKey: '',
             licenseInstances: omit(settings.licenseInstances, settings.licenseKey || ''),
@@ -19,7 +19,7 @@ export function useAutoValidate() {
         }))
     }
     useEffect(() => {
-        ; (async () => {
+        ;(async () => {
             if (!settings.licenseKey || !settings.licenseInstances) {
                 return
             }
@@ -31,18 +31,13 @@ export function useAutoValidate() {
             try {
                 const result = await remote.validateLicense({
                     licenseKey: settings.licenseKey,
-                    instanceId: instanceId,
+                    instanceId,
                 })
                 if (!result.valid) {
                     clearValidatedData()
-                    return
                 }
             } catch (err) {
-                if (
-                    err instanceof FetchError
-                    && err.status
-                    && [401, 403, 404].includes(err.status)
-                ) {
+                if (err instanceof FetchError && err.status && [401, 403, 404].includes(err.status)) {
                     clearValidatedData()
                 } else {
                     Sentry.captureException(err)

@@ -1,6 +1,6 @@
+import platform from '@/packages/platform'
 import BaseStorage from './BaseStorage'
 import { defaultSessionsForEN, defaultSessionsForCN } from '../packages/initial_data'
-import platform from '@/packages/platform'
 
 export enum StorageKey {
     ChatSessions = 'chat-sessions',
@@ -15,11 +15,12 @@ export default class StoreStorage extends BaseStorage {
     constructor() {
         super()
     }
+
     public async getItem<T>(key: string, initialValue: T): Promise<T> {
         let value: T = await super.getItem(key, initialValue)
 
         if (key === StorageKey.ChatSessions && value === initialValue) {
-            const lang = await platform.getLocale().catch(e => 'en')
+            const lang = await platform.getLocale().catch((e) => 'en')
             if (lang.startsWith('zh')) {
                 value = defaultSessionsForCN as T
             } else {

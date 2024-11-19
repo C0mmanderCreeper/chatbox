@@ -1,3 +1,4 @@
+import { ofetch } from 'ofetch'
 import {
     Config,
     CopilotDetail,
@@ -7,10 +8,8 @@ import {
     ChatboxAILicenseDetail,
     Settings,
 } from '../../shared/types'
-import { ofetch } from 'ofetch'
 
 export const API_ORIGIN = 'https://chatboxai.app'
-
 
 export async function checkNeedUpdate(version: string, os: string, config: Config, settings: Settings) {
     type Response = {
@@ -21,11 +20,11 @@ export async function checkNeedUpdate(version: string, os: string, config: Confi
         retry: 3,
         body: {
             uuid: config.uuid,
-            os: os,
+            os,
             allowReportingAndTracking: settings.allowReportingAndTracking ? 1 : 0,
         },
     })
-    return !!res['need_update']
+    return !!res.need_update
 }
 
 export async function getSponsorAd(): Promise<null | SponsorAd> {
@@ -35,7 +34,7 @@ export async function getSponsorAd(): Promise<null | SponsorAd> {
     const res = await ofetch<Response>(`${API_ORIGIN}/sponsor_ad`, {
         retry: 3,
     })
-    return res['data'] || null
+    return res.data || null
 }
 
 export async function listSponsorAboutBanner() {
@@ -45,7 +44,7 @@ export async function listSponsorAboutBanner() {
     const res = await ofetch<Response>(`${API_ORIGIN}/sponsor_ad`, {
         retry: 3,
     })
-    return res['data'] || []
+    return res.data || []
 }
 
 export async function listCopilots(lang: string) {
@@ -57,14 +56,14 @@ export async function listCopilots(lang: string) {
         retry: 3,
         body: { lang },
     })
-    return res['data']
+    return res.data
 }
 
 export async function recordCopilotShare(detail: CopilotDetail) {
     await ofetch(`${API_ORIGIN}/api/copilots/share-record`, {
         method: 'POST',
         body: {
-            detail: detail,
+            detail,
         },
     })
 }
@@ -76,7 +75,7 @@ export async function getRemoteConfig(config: keyof RemoteConfig) {
     const res = await ofetch<Response>(`${API_ORIGIN}/api/remote_config/${config}`, {
         retry: 3,
     })
-    return res['data']
+    return res.data
 }
 
 export interface DialogConfig {
@@ -93,7 +92,7 @@ export async function getDialogConfig(params: { uuid: string; language: string; 
         retry: 3,
         body: params,
     })
-    return res['data'] || null
+    return res.data || null
 }
 
 export async function getLicenseDetail(params: { licenseKey: string }) {
@@ -106,7 +105,7 @@ export async function getLicenseDetail(params: { licenseKey: string }) {
             Authorization: params.licenseKey,
         },
     })
-    return res['data'] || null
+    return res.data || null
 }
 
 export async function getLicenseDetailRealtime(params: { licenseKey: string }) {
@@ -119,13 +118,10 @@ export async function getLicenseDetailRealtime(params: { licenseKey: string }) {
             Authorization: params.licenseKey,
         },
     })
-    return res['data'] || null
+    return res.data || null
 }
 
-export async function activateLicense(params: {
-    licenseKey: string,
-    instanceName: string
-}) {
+export async function activateLicense(params: { licenseKey: string; instanceName: string }) {
     type Response = {
         data: {
             valid: boolean
@@ -141,13 +137,10 @@ export async function activateLicense(params: {
         body: JSON.stringify(params),
     })
     const json: Response = await res.json()
-    return json['data']
+    return json.data
 }
 
-export async function deactivateLicense(params: {
-    licenseKey: string,
-    instanceId: string
-}) {
+export async function deactivateLicense(params: { licenseKey: string; instanceId: string }) {
     await ofetch(`${API_ORIGIN}/api/license/deactivate`, {
         method: 'POST',
         headers: {
@@ -157,10 +150,7 @@ export async function deactivateLicense(params: {
     })
 }
 
-export async function validateLicense(params: {
-    licenseKey: string,
-    instanceId: string
-}) {
+export async function validateLicense(params: { licenseKey: string; instanceId: string }) {
     type Response = {
         data: {
             valid: boolean
@@ -174,5 +164,5 @@ export async function validateLicense(params: {
         body: JSON.stringify(params),
     })
     const json: Response = await res.json()
-    return json['data']
+    return json.data
 }

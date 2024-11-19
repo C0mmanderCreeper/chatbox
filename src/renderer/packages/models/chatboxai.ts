@@ -1,8 +1,8 @@
 import { ChatboxAILicenseDetail, ChatboxAIModel, Message, MessageRole } from 'src/shared/types'
+import { parseJsonOrEmpty } from '@/lib/utils'
 import Base, { onResultChange } from './base'
 import { API_ORIGIN } from '../remote'
 import { BaseError, ApiError, NetworkError, ChatboxAIAPIError } from './errors'
-import { parseJsonOrEmpty } from '@/lib/utils'
 
 export const chatboxAIModels: ChatboxAIModel[] = ['chatboxai-3.5', 'chatboxai-4']
 
@@ -25,14 +25,20 @@ export default class ChatboxAI extends Base {
     public name = 'ChatboxAI'
 
     public options: Options
+
     public config: Config
+
     constructor(options: Options, config: Config) {
         super()
         this.options = options
         this.config = config
     }
 
-    async callChatCompletion(rawMessages: Message[], signal?: AbortSignal, onResultChange?: onResultChange): Promise<string> {
+    async callChatCompletion(
+        rawMessages: Message[],
+        signal?: AbortSignal,
+        onResultChange?: onResultChange
+    ): Promise<string> {
         const messages = await populateChatboxAIMessage(rawMessages)
         const response = await this.post(
             `${API_ORIGIN}/api/ai/chat`,
@@ -109,7 +115,7 @@ export default class ChatboxAI extends Base {
                     requestError = e
                 } else {
                     const err = e as Error
-                    const origin = new URL(url).origin
+                    const { origin } = new URL(url)
                     requestError = new NetworkError(err.message, origin)
                 }
                 await new Promise((resolve) => setTimeout(resolve, 500))
@@ -122,12 +128,7 @@ export default class ChatboxAI extends Base {
         }
     }
 
-    async get(
-        url: string,
-        headers: Record<string, string>,
-        signal?: AbortSignal,
-        retry = 3
-    ) {
+    async get(url: string, headers: Record<string, string>, signal?: AbortSignal, retry = 3) {
         let requestError: ApiError | NetworkError | null = null
         for (let i = 0; i < retry + 1; i++) {
             try {
@@ -151,7 +152,7 @@ export default class ChatboxAI extends Base {
                     requestError = e
                 } else {
                     const err = e as Error
-                    const origin = new URL(url).origin
+                    const { origin } = new URL(url)
                     requestError = new NetworkError(err.message, origin)
                 }
             }
@@ -162,7 +163,6 @@ export default class ChatboxAI extends Base {
             throw new Error('Unknown error')
         }
     }
-
 }
 
 export interface ChatboxAIMessage {

@@ -1,6 +1,6 @@
-import * as store from './store-node'
 import { app } from 'electron'
 import { ofetch } from 'ofetch'
+import * as store from './store-node'
 
 // https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?hl=zh-cn&client_type=gtag
 // https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events?client_type=gtag&hl=zh-cn#required_parameters
@@ -19,7 +19,7 @@ export async function event(name: string, params: any = {}) {
                 client_id: clientId,
                 events: [
                     {
-                        name: name,
+                        name,
                         params: {
                             app_name: 'chatbox',
                             app_version: app.getVersion(),

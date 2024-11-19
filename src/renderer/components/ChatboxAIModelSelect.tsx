@@ -1,7 +1,7 @@
-import SimpleSelect from './SimpleSelect'
-import { ChatboxAIModel } from '../../shared/types'
 import { useTranslation } from 'react-i18next'
 import { chatboxAIModels } from '@/packages/models/chatboxai'
+import SimpleSelect from './SimpleSelect'
+import { ChatboxAIModel } from '../../shared/types'
 
 export interface Props {
     value?: ChatboxAIModel

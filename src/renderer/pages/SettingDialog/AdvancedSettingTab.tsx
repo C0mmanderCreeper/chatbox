@@ -1,22 +1,12 @@
-import {
-    Typography,
-    Box,
-    useTheme,
-    Tabs,
-    Tab,
-    FormGroup,
-    FormControlLabel,
-    Checkbox,
-    Button,
-} from '@mui/material'
-import { Settings } from '../../../shared/types'
+import { Typography, Box, useTheme, Tabs, Tab, FormGroup, FormControlLabel, Checkbox, Button } from '@mui/material'
 import { useTranslation } from 'react-i18next'
+import { useAtom } from 'jotai'
+import { useState, useRef } from 'react'
+import { Settings } from '../../../shared/types'
 import { Accordion, AccordionSummary, AccordionDetails } from '../../components/Accordion'
 import TextFieldReset from '../../components/TextFieldReset'
-import { useAtom } from 'jotai'
 import * as atoms from '../../stores/atoms'
 import storage, { StorageKey } from '../../storage'
-import { useState, useRef } from 'react'
 import platform from '../../packages/platform'
 
 interface Props {
@@ -73,26 +63,26 @@ export function AnalyticsSetting() {
     return (
         <Box>
             <div>
-                <p className='opacity-70'>
-                    {t('Chatbox respects your privacy and only uploads anonymous error data and events when necessary. You can change your preferences at any time in the settings.')}
+                <p className="opacity-70">
+                    {t(
+                        'Chatbox respects your privacy and only uploads anonymous error data and events when necessary. You can change your preferences at any time in the settings.'
+                    )}
                 </p>
             </div>
-            <div className='my-2'>
+            <div className="my-2">
                 <AllowReportingAndTrackingCheckbox />
             </div>
         </Box>
     )
 }
 
-export function AllowReportingAndTrackingCheckbox(props: {
-    className?: string
-}) {
+export function AllowReportingAndTrackingCheckbox(props: { className?: string }) {
     const { t } = useTranslation()
     const [allowReportingAndTracking, setAllowReportingAndTracking] = useAtom(atoms.allowReportingAndTrackingAtom)
     return (
         <span className={props.className}>
             <input
-                type='checkbox'
+                type="checkbox"
                 checked={allowReportingAndTracking}
                 onChange={(e) => setAllowReportingAndTracking(e.target.checked)}
             />
@@ -121,8 +111,8 @@ function ExportAndImport(props: { onCancel: () => void }) {
     const onExport = async () => {
         const data = await storage.getAll()
         delete data[StorageKey.Configs]
-            ; (data[StorageKey.Settings] as Settings).licenseDetail = undefined
-            ; (data[StorageKey.Settings] as Settings).licenseInstances = undefined
+        ;(data[StorageKey.Settings] as Settings).licenseDetail = undefined
+        ;(data[StorageKey.Settings] as Settings).licenseInstances = undefined
         if (!exportItems.includes(ExportDataItem.Setting)) {
             delete data[StorageKey.Settings]
         }
@@ -133,8 +123,8 @@ function ExportAndImport(props: { onCancel: () => void }) {
             delete data[StorageKey.MyCopilots]
         }
         const date = new Date()
-        data['__exported_items'] = exportItems
-        data['__exported_at'] = date.toISOString()
+        data.__exported_items = exportItems
+        data.__exported_at = date.toISOString()
         const dateStr = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
         platform.exporter.exportTextFile(`chatbox-exported-data-${dateStr}.json`, JSON.stringify(data))
     }
@@ -146,10 +136,10 @@ function ExportAndImport(props: { onCancel: () => void }) {
         }
         const reader = new FileReader()
         reader.onload = (event) => {
-            ; (async () => {
+            ;(async () => {
                 setImportTips('')
                 try {
-                    let result = event.target?.result
+                    const result = event.target?.result
                     if (typeof result !== 'string') {
                         throw new Error('FileReader result is not string')
                     }

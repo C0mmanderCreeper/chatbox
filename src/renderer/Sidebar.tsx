@@ -15,16 +15,16 @@ import {
 import SettingsIcon from '@mui/icons-material/Settings'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import { useTranslation } from 'react-i18next'
-import icon from './static/icon.png'
 import SmartToyIcon from '@mui/icons-material/SmartToy'
 import AddIcon from '@mui/icons-material/AddCircleOutline'
+import MenuOpenIcon from '@mui/icons-material/MenuOpen'
+import { useSetAtom } from 'jotai'
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
+import icon from './static/icon.png'
 import useVersion from './hooks/useVersion'
 import SessionList from './components/SessionList'
 import * as sessionActions from './stores/sessionActions'
-import MenuOpenIcon from '@mui/icons-material/MenuOpen'
-import { useSetAtom } from 'jotai'
 import * as atoms from './stores/atoms'
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
 import { trackingEvent } from './packages/event'
 
 export const drawerWidth = 240
@@ -70,12 +70,12 @@ export default function Sidebar(props: Props) {
                 >
                     <Box className="flex justify-between items-center p-0 m-0 mx-2 mb-4">
                         <Box>
-                            <a href="https://chatboxai.app" target="_blank">
+                            <a href="https://chatboxai.app" target="_blank" rel="noreferrer">
                                 <img src={icon} className="w-8 h-8 mr-2 align-middle inline-block" />
                                 <span className="text-2xl align-middle inline-block">Chatbox</span>
                             </a>
                         </Box>
-                        <Box></Box>
+                        <Box />
                     </Box>
 
                     <SessionList sessionListRef={sessionListRef} />

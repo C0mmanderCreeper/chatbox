@@ -22,7 +22,7 @@ export default function TopPSlider(props: Props) {
         }
     }
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = event.target.value
+        const { value } = event.target
         if (value === '' || value.endsWith('.')) {
             setInput(value)
             return

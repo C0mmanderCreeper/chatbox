@@ -16,6 +16,7 @@ export default class SiliconFlow extends Base {
     public name = 'SiliconFlow'
 
     public options: Options
+
     constructor(options: Options) {
         super()
         this.options = options
@@ -147,8 +148,8 @@ export async function populateSiliconFlowMessageText(rawMessages: Message[]): Pr
 export function injectModelSystemPrompt(model: string, messages: SiliconFlowMessage[]) {
     for (const message of messages) {
         if (message.role === 'system') {
-            if (typeof message.content == 'string') {
-                message.content = `Current model: ${model}\n\n` + message.content
+            if (typeof message.content === 'string') {
+                message.content = `Current model: ${model}\n\n${message.content}`
             }
             break
         }

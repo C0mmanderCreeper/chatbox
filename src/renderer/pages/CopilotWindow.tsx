@@ -20,23 +20,23 @@ import {
     Box,
     ButtonGroup,
 } from '@mui/material'
-import { CopilotDetail, Message } from '../../shared/types'
 import { useTranslation } from 'react-i18next'
 import EditIcon from '@mui/icons-material/Edit'
-import StyledMenu from '../components/StyledMenu'
 import StarIcon from '@mui/icons-material/Star'
 import StarOutlineIcon from '@mui/icons-material/StarOutline'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined'
-import { useMyCopilots, useRemoteCopilots } from '../hooks/useCopilots'
-import * as remote from '../packages/remote'
 import { v4 as uuidv4 } from 'uuid'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
+import { useAtomValue } from 'jotai'
+import { trackingEvent } from '@/packages/event'
+import { useMyCopilots, useRemoteCopilots } from '../hooks/useCopilots'
+import * as remote from '../packages/remote'
 import * as atoms from '../stores/atoms'
 import * as sessionActions from '../stores/sessionActions'
-import { useAtomValue } from 'jotai'
 import platform from '../packages/platform'
-import { trackingEvent } from '@/packages/event'
+import StyledMenu from '../components/StyledMenu'
+import { CopilotDetail, Message } from '../../shared/types'
 
 interface Props {
     open: boolean
@@ -132,7 +132,7 @@ export default function CopilotWindow(props: Props) {
                 <ScrollableTabsButtonAuto
                     values={[{ value: 'my', label: t('My Copilots') }]}
                     currentValue="my"
-                    onChange={() => { }}
+                    onChange={() => {}}
                 />
                 <div
                     style={{
@@ -174,7 +174,7 @@ export default function CopilotWindow(props: Props) {
                         },
                     ]}
                     currentValue="chatbox-featured"
-                    onChange={() => { }}
+                    onChange={() => {}}
                 />
                 <div
                     style={{
@@ -200,18 +200,18 @@ export default function CopilotWindow(props: Props) {
 
 type MiniItemProps =
     | {
-        mode: 'local'
-        detail: CopilotDetail
-        useMe(): void
-        switchStarred(): void
-        editMe(): void
-        deleteMe(): void
-    }
+          mode: 'local'
+          detail: CopilotDetail
+          useMe(): void
+          switchStarred(): void
+          editMe(): void
+          deleteMe(): void
+      }
     | {
-        mode: 'remote'
-        detail: CopilotDetail
-        useMe(): void
-    }
+          mode: 'remote'
+          detail: CopilotDetail
+          useMe(): void
+      }
 
 function MiniItem(props: MiniItemProps) {
     const { t } = useTranslation()
@@ -248,19 +248,15 @@ function MiniItem(props: MiniItemProps) {
                     opacity: 1,
                 },
             }}
-            className='w-48 hover:bg-slate-400/25 border-solid border-slate-400/20 rounded-md'
+            className="w-48 hover:bg-slate-400/25 border-solid border-slate-400/20 rounded-md"
             onClick={useCopilot}
         >
-            <Avatar
-                sizes="30px"
-                sx={{ width: '30px', height: '30px' }}
-                src={props.detail.picUrl}
-            ></Avatar>
+            <Avatar sizes="30px" sx={{ width: '30px', height: '30px' }} src={props.detail.picUrl} />
             <div
                 style={{
                     marginLeft: '5px',
                 }}
-                className='w-28'
+                className="w-28"
             >
                 <Typography variant="body1" noWrap>
                     {props.detail.name}
@@ -295,7 +291,7 @@ function MiniItem(props: MiniItemProps) {
                         onClose={closeMenu}
                     >
                         <MenuItem
-                            key={'star'}
+                            key="star"
                             onClick={() => {
                                 props.switchStarred()
                                 closeMenu()
@@ -316,7 +312,7 @@ function MiniItem(props: MiniItemProps) {
                         </MenuItem>
 
                         <MenuItem
-                            key={'edit'}
+                            key="edit"
                             onClick={() => {
                                 props.editMe()
                                 closeMenu()
@@ -330,7 +326,7 @@ function MiniItem(props: MiniItemProps) {
                         <Divider sx={{ my: 0.5 }} />
 
                         <MenuItem
-                            key={'del'}
+                            key="del"
                             onClick={() => {
                                 setAnchorEl(null)
                                 closeMenu()
@@ -442,7 +438,7 @@ function CopilotForm(props: CopilotFormProps) {
                 placeholder={t('My Assistant') as any}
                 value={copilotEdit.name}
                 onChange={inputHandler('name')}
-                helperText={helperTexts['name']}
+                helperText={helperTexts.name}
             />
             <TextField
                 margin="dense"
@@ -455,7 +451,7 @@ function CopilotForm(props: CopilotFormProps) {
                 maxRows={10}
                 value={copilotEdit.prompt}
                 onChange={inputHandler('prompt')}
-                helperText={helperTexts['prompt']}
+                helperText={helperTexts.prompt}
             />
             <TextField
                 margin="dense"

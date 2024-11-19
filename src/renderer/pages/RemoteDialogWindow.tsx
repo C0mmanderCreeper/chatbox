@@ -1,12 +1,12 @@
 import React from 'react'
 import { Box, Button, Dialog, DialogContent, DialogActions, DialogContentText } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import * as remote from '../packages/remote'
 import { getDefaultStore } from 'jotai'
 import platform from '@/packages/platform'
-import { settingsAtom } from '../stores/atoms'
 import Markdown from '@/components/Markdown'
 import { trackingEvent } from '@/packages/event'
+import { settingsAtom } from '../stores/atoms'
+import * as remote from '../packages/remote'
 
 const { useEffect, useState } = React
 
@@ -27,7 +27,7 @@ export default function RemoteDialogWindow() {
             const dialog = await remote.getDialogConfig({
                 uuid: config.uuid,
                 language: settings.language,
-                version: version,
+                version,
             })
             setDialogConfig(dialog)
             if (dialog) {
