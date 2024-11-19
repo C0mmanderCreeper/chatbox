@@ -5,13 +5,13 @@ import * as store from './store-node'
 // https://developers.google.com/analytics/devguides/collection/protocol/ga4/reference?hl=zh-cn&client_type=gtag
 // https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events?client_type=gtag&hl=zh-cn#required_parameters
 
-const measurement_id = `G-T6Q7MNPNLK`
-const api_secret = `pRnsvLo-REWLVzV_PbKvWg`
+const measurementId = `G-T6Q7MNPNLK`
+const apiSecret = `pRnsvLo-REWLVzV_PbKvWg`
 
-export async function event(name: string, params: any = {}) {
+export  async function event(name: string, params: any = {}) {
     const clientId = store.getConfig().uuid
     const res = await ofetch(
-        `https://www.google-analytics.com/mp/collect?measurement_id=${measurement_id}&api_secret=${api_secret}`,
+        `https://www.google-analytics.com/mp/collect?measurement_id=${measurementId}&api_secret=${apiSecret}`,
         {
             method: 'POST',
             body: {
